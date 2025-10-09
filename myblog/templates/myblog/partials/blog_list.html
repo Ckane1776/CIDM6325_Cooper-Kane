@@ -1,0 +1,21 @@
+<ul class="list-group">
+    {% for post in posts %}
+        <li class="list-group-item" aria-label="{{ post.title }}">
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.content }}</p>
+            <small>Published: {{ post.published_date }}</small>
+            <div>
+                {% if perms.myblog.change_blogpost %}
+                    <a href="{% url 'blog_edit' post.pk %}" class="btn btn-sm btn-warning" 
+                        hx-get="{% url 'blog_edit' post.pk %}" 
+                        hx-target="closest li" 
+                        hx-swap="outerHTML">Edit</a>
+                {% endif %} {% if perms.myblog.delete_blogpost %}
+                    <a href="{% url 'blog_delete' post.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                {% endif %}
+            </div>
+        </li>
+    {% empty %}
+        <li class="list-group-item">No blog posts available.</li>
+    {% endfor %}
+</ul>

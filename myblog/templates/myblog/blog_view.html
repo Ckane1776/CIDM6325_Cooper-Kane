@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" hx-debug="true">
+<head>
+    <title>Blog Posts</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <nav class="navbar navbar-light bg-light" role="navigation">
+        <span class="navbar-brand mb-0 h1">Blog</span>
+        <div>
+            {% if user.is_authenticated %}
+            <span>Welcome, {{ user.username }}!</span>
+            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-secondary ms-2" aria-label="Logout">Logout</button>
+            </form>
+            {% else %}
+            <a href="{% url 'login' %}" class="btn btn-outline-primary" aria-label="Login">Login</a>
+            {% endif %}
+        </div>
+    </nav>
+    <main class="container mt-4" aria-label="Blog Posts">
+        <h1>Blog Posts</h1>
+        {% if perms.myblog.add_blogpost %}
+        <a href="{% url 'blog_create' %}" class="btn btn-success mb-3" aria-label="Create New Post">New Post</a>
+        {% endif %}
+        <!-- Live Search Input -->
+        <input type="text" class="form-control mb-3" placeholder="Search blog posts..."
+               name="q"
+               hx-get="{% url 'blog_list' %}" 
+               hx-trigger="keyup changed delay:500ms" 
+               hx-target="ul.list-group" 
+               hx-swap="outerHTML" 
+               hx-push-url="true"
+               hx-indicator=".htmx-indicator"
+               aria-label="Search blog posts">
+
+        <!-- Loading Indicator -->
+        <div class="htmx-indicator" style="display:none;" aria-hidden="true">Loading...</div>
+               
+        <ul class="list-group" id="blog-posts" aria-live="polite">
+            {% for post in posts %}
+            <li class="list-group-item" aria-label="{{ post.title }}">
+                <h2>{{ post.title }}</h2>
+                <p>{{ post.content }}</p>
+                <small>Published: {{ post.published_date }}</small>
+                <div>
+                    {% if perms.myblog.change_blogpost %}
+                    <a href="{% url 'blog_edit' post.pk %}" class="btn btn-sm btn-warning" 
+                       hx-get="{% url 'blog_edit' post.pk %}" 
+                       hx-target="closest li" 
+                       hx-swap="outerHTML"
+                       aria-label="Edit {{ post.title }}">Edit</a>
+                    {% endif %} {% if perms.myblog.delete_blogpost %}
+                    <a href="{% url 'blog_delete' post.pk %}" class="btn btn-sm btn-danger" aria-label="Delete {{ post.title }}">Delete</a>
+                    {% endif %}
+                </div>
+            </li>
+            {% empty %}
+            <li class="list-group-item" aria-label="No blog posts available">No blog posts available.</li>
+            {% endfor %}
+        </ul>
+    </main>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</body>
+</html>
