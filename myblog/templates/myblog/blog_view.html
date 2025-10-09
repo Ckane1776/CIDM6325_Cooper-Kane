@@ -20,8 +20,12 @@
             {% endif %}
         </div>
     </nav>
-    <main class="container mt-4" aria-label="Blog Posts">
-        <h1>Blog Posts</h1>
+    <nav class="mt-3">
+        <a href="{% url 'blog_list' %}" class="btn btn-primary">Go to Blog</a>
+        <a href="{% url 'category_list' %}" class="btn btn-secondary">Go to Categories</a>
+    </nav>
+    <main class="container mt-4" aria-label="Blog Posts" role="main">
+        <h1 id="blog-posts-heading">Blog Posts</h1>
         {% if perms.myblog.add_blogpost %}
         <a href="{% url 'blog_create' %}" class="btn btn-success mb-3" aria-label="Create New Post">New Post</a>
         {% endif %}
@@ -39,10 +43,10 @@
         <!-- Loading Indicator -->
         <div class="htmx-indicator" style="display:none;" aria-hidden="true">Loading...</div>
                
-        <ul class="list-group" id="blog-posts" aria-live="polite">
+        <ul class="list-group" id="blog-posts" aria-live="polite" aria-labelledby="blog-posts-heading">
             {% for post in posts %}
-            <li class="list-group-item" aria-label="{{ post.title }}">
-                <h2>{{ post.title }}</h2>
+            <li class="list-group-item" aria-labelledby="post-title-{{ post.pk }}">
+                <h2 id="post-title-{{ post.pk }}">{{ post.title }}</h2>
                 <p>{{ post.content }}</p>
                 <small>Published: {{ post.published_date }}</small>
                 <div>
@@ -62,6 +66,9 @@
             {% endfor %}
         </ul>
     </main>
+    <div aria-live="polite" id="dynamic-content">
+        <!-- HTMX updates will be dynamically inserted here -->
+    </div>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </body>
 </html>

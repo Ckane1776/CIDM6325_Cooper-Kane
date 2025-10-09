@@ -1,0 +1,6 @@
+/* Updated CSS to handle long words */
+.list-group-item {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}

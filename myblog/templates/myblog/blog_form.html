@@ -7,10 +7,30 @@
 </head>
 <body>
 <div class="container mt-4">
-    <h2>{% if object %}Edit{% else %}Create{% endif %} Blog Post</h2>
-    <form method="post">
+    <h2 id="form-heading">{% if object %}Edit{% else %}Create{% endif %} Blog Post</h2>
+    <form method="post" action="{% if object %}{% url 'blog_edit' object.pk %}{% else %}{% url 'blog_create' %}{% endif %}" aria-labelledby="form-heading">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form.non_field_errors }}
+        <div class="mb-3">
+            {{ form.title.label_tag }}
+            {{ form.title }}
+            {{ form.title.errors }}
+        </div>
+        <div class="mb-3">
+            {{ form.content.label_tag }}
+            {{ form.content }}
+            {{ form.content.errors }}
+        </div>
+        <div class="mb-3">
+            {{ form.published_date.label_tag }}
+            {{ form.published_date }}
+            {{ form.published_date.errors }}
+        </div>
+        <div class="mb-3">
+            {{ form.category.label_tag }}
+            {{ form.category }}
+            {{ form.category.errors }}
+        </div>
         <button type="submit" class="btn btn-primary">Save</button>
         <a href="{% url 'blog_list' %}" class="btn btn-secondary">Cancel</a>
     </form>

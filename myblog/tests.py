@@ -7,7 +7,6 @@ from .models import BlogPost, Category
 class BlogViewTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='tester', password='testpassword')
-        print(f"Created user: {self.user}")  # Debugging print statement
 
         self.category = Category.objects.create(name="Test Category")
         self.blog_post = BlogPost.objects.create(
@@ -17,7 +16,6 @@ class BlogViewTests(TestCase):
             author=self.user,
             category=self.category
         )
-        print(f"Blog post author: {self.blog_post.author}")  # Debugging print statement
 
     def test_blog_list_displays_posts(self):
         self.client.login(username='tester', password='testpassword')
@@ -79,10 +77,8 @@ class BlogPostCRUDTests(TestCase):
 class BlogPostPermissionTests(TestCase):
     def setUp(self):
         self.user_with_permission = User.objects.create_user(username='admin', password='adminpassword')
-        print(f"Created user with permission: {self.user_with_permission}")  # Debugging print statement
 
         self.user_without_permission = User.objects.create_user(username='tester', password='testpassword')
-        print(f"Created user without permission: {self.user_without_permission}")  # Debugging print statement
 
         self.category = Category.objects.create(name="Test Category")
         self.blog_post = BlogPost.objects.create(
@@ -92,7 +88,6 @@ class BlogPostPermissionTests(TestCase):
             author=self.user_with_permission,
             category=self.category
         )
-        print(f"Blog post author: {self.blog_post.author}")  # Debugging print statement
 
         # Assign permissions to the admin user
         permissions = Permission.objects.filter(codename__in=['delete_blogpost'])
