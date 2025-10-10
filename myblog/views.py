@@ -31,6 +31,7 @@ class BlogPostCreateView(PermissionRequiredMixin, CreateView):
     success_url = '/blog/'  
 
     def form_valid(self, form):
+        form.instance.author = self.request.user  # Set the author to the logged-in user
         response = super().form_valid(form)
         form.instance.tags.set(form.cleaned_data['tags'])  # Explicitly set tags
         return response
