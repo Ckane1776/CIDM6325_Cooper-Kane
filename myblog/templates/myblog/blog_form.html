@@ -22,14 +22,20 @@
             {{ form.content.errors }}
         </div>
         <div class="mb-3">
-            {{ form.published_date.label_tag }}
-            {{ form.published_date }}
-            {{ form.published_date.errors }}
-        </div>
-        <div class="mb-3">
             {{ form.category.label_tag }}
             {{ form.category }}
             {{ form.category.errors }}
+        </div>
+        <div class="mb-3">
+            {{ form.tags.label_tag }}
+            <select id="id_tags" name="tags" class="form-select" multiple>
+                {% for tag in form.fields.tags.queryset %}
+                <option value="{{ tag.id }}" {% if tag in form.instance.tags.all %}selected{% endif %}>
+                    {{ tag.name }}
+                </option>
+                {% endfor %}
+            </select>
+            {{ form.tags.errors }}
         </div>
         <button type="submit" class="btn btn-primary">Save</button>
         <a href="{% url 'blog_list' %}" class="btn btn-secondary">Cancel</a>

@@ -9,6 +9,7 @@ from .views import (
     CategoryCreateView,
     CategoryUpdateView, 
     CategoryDeleteView,
+    TagCreateView,
 )
 
 urlpatterns = [
@@ -27,4 +28,6 @@ urlpatterns = [
     path('categories/new/', CategoryCreateView.as_view(), name='category_create'),
     path('categories/<int:pk>/edit/', CategoryUpdateView.as_view(), name='category_edit'),
     path('categories/<int:pk>/delete/', CategoryDeleteView.as_view(), name='category_delete'),
+    # Tag URLs
+    path('tags/create/', TagCreateView.as_view(), name='tag-create'),
 ]

@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from .models import BlogPost, Category
-from .forms import BlogPostForm, CategoryForm
+from .models import BlogPost, Category, Tag
+from .forms import BlogPostForm, CategoryForm, TagForm
 
 class BlogPostListView(LoginRequiredMixin, ListView):
     model = BlogPost
@@ -31,8 +31,9 @@ class BlogPostCreateView(PermissionRequiredMixin, CreateView):
     success_url = '/blog/'  
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        form.instance.tags.set(form.cleaned_data['tags'])  # Explicitly set tags
+        return response
 
     def dispatch(self, request, *args, **kwargs):
         # Check if there are any categories
@@ -49,10 +50,9 @@ class BlogPostUpdateView(PermissionRequiredMixin, UpdateView):
     success_url = '/blog/'
 
     def form_valid(self, form):
-        if self.request.headers.get('HX-Request'):  # Check if the request is from HTMX
-            self.object = form.save()
-            return render(self.request, 'myblog/partials/blog_item.html', {'post': self.object})
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        form.instance.tags.set(form.cleaned_data['tags'])  # Explicitly set tags
+        return response
 
 class BlogPostDeleteView(PermissionRequiredMixin, DeleteView):
     model = BlogPost
@@ -90,9 +90,25 @@ class CategoryDeleteView(PermissionRequiredMixin, DeleteView):
     permission_required = 'myblog.delete_category'
     success_url = '/categories/'
 
+class TagCreateView(CreateView):
+    model = Tag
+    form_class = TagForm
+    template_name = 'myblog/tag_form.html'
+    success_url = reverse_lazy('category_list')
+
 def get_queryset(self):
     queryset = super().get_queryset()
     query = self.request.GET.get('q')  # Get the search query from the request
     if query:
         queryset = queryset.filter(title__icontains=query)  # Filter by title
     return queryset
+
+def create_blog_post(request):
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('blog_list')
+    else:
+        form = BlogPostForm()
+    return render(request, 'myblog/blog_form.html', {'form': form})

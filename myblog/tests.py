@@ -74,6 +74,16 @@ class BlogPostCRUDTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertFalse(BlogPost.objects.filter(id=self.blog_post.id).exists())
 
+    def test_blog_post_form_validation(self):
+        self.client.login(username='tester', password='testpassword')
+        response = self.client.post(reverse('blog_create'), {
+            'title': 'No',  # Invalid title (too short)
+            'content': 'Valid Content',
+            'category': self.category.id
+        })
+        self.assertEqual(response.status_code, 200)  # Form should re-render with errors
+        self.assertContains(response, "Title must be at least 5 characters long.")
+
 class BlogPostPermissionTests(TestCase):
     def setUp(self):
         self.user_with_permission = User.objects.create_user(username='admin', password='adminpassword')

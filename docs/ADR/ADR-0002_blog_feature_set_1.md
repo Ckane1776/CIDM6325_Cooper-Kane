@@ -1,7 +1,7 @@
 # ADR-0002: Build Blog Feature Set 1 (Authentication, CRUD, UX, and CI/CD)
 
 Date: 2025-10-05  
-Status: Proposed
+Status: Accepted
 
 ## Context
 

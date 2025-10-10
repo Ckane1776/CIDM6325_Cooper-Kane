@@ -1,7 +1,7 @@
 # ADR-0001: Create a Simple Blog Page in Django (myblog app)
 
 Date: 2025-10-05
-Status: Proposed
+Status: Accepted
 
 Context
 
